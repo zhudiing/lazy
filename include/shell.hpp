@@ -3,14 +3,22 @@
  * @LastEditors  : liushuai05
  * @LastEditTime : 2023-03-27 17:45:27
  */
-#include "defer.h"
-
 #include <array>
 #include <csignal>
 #include <cstdio>
 #include <cstring>
 #include <mutex>
 #include <string>
+
+// defer
+#ifndef defer
+struct defer_dummy {};
+template <class F> struct deferrer { F f; ~deferrer() { f(); } };
+template <class F> deferrer<F> operator*(defer_dummy, F f) { return {f}; }
+#define DEFER_(LINE) zz_defer##LINE
+#define DEFER(LINE) DEFER_(LINE)
+#define defer auto DEFER(__LINE__) = defer_dummy{} *[&]()
+#endif
 
 namespace Shell
 {
