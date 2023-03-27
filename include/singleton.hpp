@@ -10,6 +10,14 @@
 #include <cstring>
 #include <stdexcept>
 
+#if 0 //usage
+    SingletonProcess singleton(5555); //some port
+    if(!singleton()) {
+        std::cerr << "Process is running already. See " << singleton.GetLockFileName() << std::endl;
+        return 1;
+    }
+#endif
+
 using namespace std;
 class SingletonProcess
 {
