@@ -3,6 +3,7 @@
  * @LastEditors  : liushuai05
  * @LastEditTime : 2023-03-27 17:45:27
  */
+#pragma once
 #include <array>
 #include <csignal>
 #include <cstdio>
@@ -10,7 +11,6 @@
 #include <mutex>
 #include <string>
 
-// defer
 #ifndef defer
 struct defer_dummy {};
 template <class F> struct deferrer { F f; ~deferrer() { f(); } };
@@ -18,7 +18,7 @@ template <class F> deferrer<F> operator*(defer_dummy, F f) { return {f}; }
 #define DEFER_(LINE) zz_defer##LINE
 #define DEFER(LINE) DEFER_(LINE)
 #define defer auto DEFER(__LINE__) = defer_dummy{} *[&]()
-#endif
+#endif    // defer
 
 namespace Shell
 {
@@ -32,11 +32,11 @@ namespace Shell
         friend std::ostream &operator<<(std::ostream &os, const Result &result);
     };
 
-    bool Result::operator==(const Result &rhs) const { return output == rhs.output && exitCode == rhs.exitCode; }
-    bool Result::operator!=(const Result &rhs) const { return !(rhs == *this); }
-    Result::operator bool() const { return exitCode == 0; }
+    inline bool Result::operator==(const Result &rhs) const { return output == rhs.output && exitCode == rhs.exitCode; }
+    inline bool Result::operator!=(const Result &rhs) const { return !(rhs == *this); }
+    inline Result::operator bool() const { return exitCode == 0; }
 
-    std::ostream &operator<<(std::ostream &os, const Result &result)
+    inline std::ostream &operator<<(std::ostream &os, const Result &result)
     {
         os << "exit code: " << result.exitCode << " output: " << result.output;
         return os;
@@ -47,9 +47,10 @@ namespace Shell
      * 注意命令是否会阻塞
      *
      * @param command
+     * @param os 
      * @return
      */
-    Result exec(const std::string &command)
+    inline Result exec(const std::string &command, std::ostream *os = nullptr)
     {
         static std::mutex mutex;
 
@@ -79,6 +80,7 @@ namespace Shell
             std::size_t bytesRead;
             while((bytesRead = std::fread(buffer.data(), sizeof(buffer.at(0)), sizeof(buffer), pipe)) != 0) {
                 result += std::string(buffer.data(), bytesRead);
+                if(os) { *os << std::string(buffer.data(), bytesRead); }
             }
         } catch(...) {
             pclose(pipe);
