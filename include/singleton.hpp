@@ -3,6 +3,7 @@
  * @LastEditors  : zhudi
  * @LastEditTime : 2023-03-24 17:42:56
  */
+#pragma once
 #include <netinet/in.h>
 #include <unistd.h>
 #include <cerrno>
