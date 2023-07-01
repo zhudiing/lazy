@@ -30,11 +30,20 @@
     #define KV(x) _KV(x)
 #endif
 
-#ifndef LOGGER
-    //使用前请定义TAG eg: constexpr auto TAG{"MAIN"};
-    #define LOGGER(TAG) "[" << __TIME__ << "] " << TAG << "<ln:" << __LINE__ << "> ->" << __PRETTY_FUNCTION__ << " "
-    #define LOGD std::cout << " DEBUG " << LOGGER(TAG)
-    #define LOGE std::cerr << "\033[95m ERROR \033[0m" << LOGGER(TAG)
-    #define MARK(x) LOGD << "\033[91m" << x << "\033[0m" << std::endl;
-    #define ARGS(...) LOGD << FOR_EACH(KV, __VA_ARGS__) << std::endl;
+#define SHORT
+#ifndef FORMAT
+// 使用前请定义TAG eg: constexpr auto TAG{"MAIN"};
+#ifndef SHORT
+#define FORMAT(TAG)                                                \
+    "[" << __TIME__ << "] " << TAG << "<ln:" << __LINE__ << "> ->" \
+        << __PRETTY_FUNCTION__ << " "
+#else
+#define FORMAT(TAG) \
+    "[" << __TIME__ << "] " << TAG << "<ln:" << __LINE__ << "> -> "
+#endif
+#define LOGD std::cout << " DEBUG " << FORMAT(TAG)
+#define LOGE std::cerr << "\033[95m ERROR \033[0m" << FORMAT(TAG)
+#define MARK(x) LOGD << "\033[91m" << x << "\033[0m" << std::endl;
+#define ARGS(...) LOGD << FOR_EACH(KV, __VA_ARGS__) << std::endl;
+#define TYPE(x) LOGD << KV(typeid(x).name()) << std::endl;
 #endif
