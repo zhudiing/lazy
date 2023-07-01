@@ -3,6 +3,8 @@
  * @LastEditors  : zhudi
  * @LastEditTime : 2023-03-24 19:59:23
  */
+#pragma once
+#include <typeinfo>
 
 // 扩展到8个参数
 #define FE_0(WHAT)
