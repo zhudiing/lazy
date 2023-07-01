@@ -5,6 +5,8 @@
  */
 #pragma once
 #include <chrono>
+#include <ctime>
+#include <iomanip>
 #include <iostream>
 #include <thread>
 
@@ -39,3 +41,9 @@ template <class F> measure<F> operator*(mt_dummy, F f) { return {f}; }
 
 //睡眠
 #define sleep_ms(ms) std::this_thread::sleep_for(std::chrono::milliseconds(ms))
+
+//生成时间戳
+#define CURRENT_TIMESTAMP                                    \
+    std::chrono::duration_cast<std::chrono::seconds>(        \
+        std::chrono::system_clock::now().time_since_epoch()) \
+        .count()
